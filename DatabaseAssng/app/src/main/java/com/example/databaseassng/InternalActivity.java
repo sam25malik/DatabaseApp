@@ -1,0 +1,163 @@
+package com.example.databaseassng;
+
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class InternalActivity extends AppCompatActivity {
+    private static final String TAG = "InternalActivity";
+
+    EditText Summary;
+    TextView Output;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_internal);
+
+        Summary = (EditText) findViewById(R.id.edit_summary);
+        Output = (TextView)findViewById(R.id.textViewer_sum);
+
+    }
+
+    public void store_summary(View view)
+    {
+        String name_file = "mystorefile";
+        String string= Summary.getText().toString();
+
+        FileOutputStream oStr;
+        try {
+            oStr = openFileOutput(name_file, Context.MODE_PRIVATE);
+            oStr.write(string.getBytes());
+            oStr.close();
+            Toast.makeText(getApplicationContext(),"Message Saved to Internal Storage",Toast.LENGTH_SHORT).show();
+            Summary.setText("");
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void read_summary(View view)
+    {
+        try
+        {
+            FileInputStream fiStr = openFileInput("mystorefile");
+            InputStreamReader isr = new InputStreamReader(fiStr);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuffer s_b = new StringBuffer();
+            String string;
+
+            while((string=bufferedReader.readLine())!=null)
+            {
+                s_b.append(string+'\n');
+            }
+
+            Output.setText(s_b.toString());
+            Output.setVisibility(View.VISIBLE);
+
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+        //savedInstanceState.putString("Name", Name.getText().toString());
+        //savedInstanceState.putString("Email", Email.getText().toString());
+        //savedInstanceState.putString("str1", str1.getText().toString());
+        //savedInstanceState.putString("str2", str2.getText().toString());
+
+        savedInstanceState.putString("str3", Output.getText().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        super.onRestoreInstanceState(savedInstanceState);
+        //Name.setText(savedInstanceState.getString("Name"));
+        //Email.setText(savedInstanceState.getString("Email"));
+            Output.setText(savedInstanceState.getString("str3"));
+    }
+
+
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+        {
+            Toast.makeText(this,"landscape",Toast.LENGTH_SHORT).show();
+
+        }
+        else if(newConfig.orientation == Configuration.ORIENTATION_PORTRAIT)
+        {
+            Toast.makeText(this,"portrait",Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        Log.d(TAG, "Inside OnStart");
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        Log.d(TAG,"Inside OnPause");
+
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d(TAG,"Inside OnREsume");
+
+
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.d(TAG, "Inside OnSTop");
+
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.d(TAG, "Inside OnDestroy");
+    }
+}
+
